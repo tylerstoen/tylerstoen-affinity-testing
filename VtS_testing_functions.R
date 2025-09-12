@@ -40,7 +40,6 @@ find_A_star_delta <- function(corr_matrices, A0 = character(0), alpha = 0.05, n_
   n_groups <- length(corr_matrices)
   combined_data <- do.call(cbind, corr_matrices)
   
-  # Create vector of group labels (assumes samples in each original_data_list are columns)
   group_sizes <- sapply(corr_matrices, ncol)
   group_labels <- rep(1:n_groups, times = group_sizes)
   
@@ -48,15 +47,12 @@ find_A_star_delta <- function(corr_matrices, A0 = character(0), alpha = 0.05, n_
     # Permute group labels
     permuted_labels <- sample(group_labels)
     
-    # Split combined_data columns by permuted groups
     permuted_data_list <- lapply(1:n_groups, function(g) {
       combined_data[, permuted_labels == g, drop = FALSE]
     })
     
-    # Compute correlation matrices on permuted data
     corr_matrices_perm <- lapply(permuted_data_list, function(data) cor(t(data)))
     
-    # Compute delta per taxa on permuted correlation matrices
     delta_perm[, perm_i] <- sapply(names(delta_values), function(j) {
       compute_delta(corr_matrices_perm, j, A)
     })
