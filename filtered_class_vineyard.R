@@ -41,7 +41,7 @@ test2 <- compute_delta(CC_corr_matrices, "deltaproteobacteria", c("acidobacterii
 test
 test2
 
-test_astar_og <- find_A_star_delta(CC_corr_matrices, c("cloacimonetes"))
+test_astar_og <- find_A_star_delta(CC_corr_matrices, c("cloacimonetes", "gemmatimonadetes"))
 
 get_correlation_heatmap_2(HW_corr_matrix, test_astar_og)
 get_correlation_heatmap_2(LW_corr_matrix, test_astar_og)
