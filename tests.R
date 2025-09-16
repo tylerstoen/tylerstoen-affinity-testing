@@ -150,33 +150,33 @@ find_A_star_delta(test5_matrices, c("V1", "V2", "V8"))
 
 
 # Test 6 (high corr under all conditions)
-test5_sigma_A <- diag(100)  # makes a 100x100 identity matrix
-test5_sigma_A[1:10, 1:10] <- 0.7 #gives the first 10 rows positive correlations (NOTE 0.5 signal not strong enough)
-test5_sigma_A[row(test5_sigma_A) == col(test5_sigma_A)] = 1 # makes sure diagonal is one
+test6_sigma_A <- diag(100)  # makes a 100x100 identity matrix
+test6_sigma_A[1:10, 1:10] <- 0.7 #gives the first 10 rows positive correlations (NOTE 0.5 signal not strong enough)
+test6_sigma_A[row(test6_sigma_A) == col(test6_sigma_A)] = 1 # makes sure diagonal is one
 
-test5_sigma_B <- diag(100)
-test5_sigma_B[1:10, 1:10] <- 0.7
-test5_sigma_B[row(test5_sigma_B) == col(test5_sigma_B)] = 1
+test6_sigma_B <- diag(100)
+test6_sigma_B[1:10, 1:10] <- 0.7
+test6_sigma_B[row(test6_sigma_B) == col(test6_sigma_B)] = 1
 
-test5_sigma_C <- diag(100)
-test5_sigma_C[1:10, 1:10] <- 0.7
-test5_sigma_C[row(test5_sigma_C) == col(test5_sigma_C)] = 1
+test6_sigma_C <- diag(100)
+test6_sigma_C[1:10, 1:10] <- 0.7
+test6_sigma_C[row(test6_sigma_C) == col(test6_sigma_C)] = 1
 
-test5_sample_A <- mvrnorm(100, rep(0, 100), test5_sigma_A)
-test5_sample_B <- mvrnorm(100, rep(0, 100), test5_sigma_B)
-test5_sample_C <- mvrnorm(100, rep(0, 100), test5_sigma_C)
+test6_sample_A <- mvrnorm(100, rep(0, 100), test6_sigma_A)
+test6_sample_B <- mvrnorm(100, rep(0, 100), test6_sigma_B)
+test6_sample_C <- mvrnorm(100, rep(0, 100), test6_sigma_C)
 
-colnames(test5_sample_A) <- paste0("V", 1:100)
-rownames(test5_sample_A) <- paste0("V", 1:100)
-colnames(test5_sample_B) <- paste0("V", 1:100)
-rownames(test5_sample_B) <- paste0("V", 1:100)
-colnames(test5_sample_C) <- paste0("V", 1:100)
-rownames(test5_sample_C) <- paste0("V", 1:100)
+colnames(test6_sample_A) <- paste0("V", 1:100)
+rownames(test6_sample_A) <- paste0("V", 1:100)
+colnames(test6_sample_B) <- paste0("V", 1:100)
+rownames(test6_sample_B) <- paste0("V", 1:100)
+colnames(test6_sample_C) <- paste0("V", 1:100)
+rownames(test6_sample_C) <- paste0("V", 1:100)
 
-test5_matrices <- lapply(list(test5_sample_A, test5_sample_B, test5_sample_C), cor)
+test6_matrices <- lapply(list(test6_sample_A, test6_sample_B, test6_sample_C), cor)
 
-compute_delta(test5_matrices, "V1", c("V8"))
-compute_delta(test5_matrices, "V1", c("V18"))
-compute_delta(test5_matrices, "V25", c("V80"))
-find_A_star_delta(test5_matrices, c("V1"))
-find_A_star_delta(test5_matrices, c("V1", "V2", "V8"))
+compute_delta(test6_matrices, "V1", c("V8"))
+compute_delta(test6_matrices, "V1", c("V18"))
+compute_delta(test6_matrices, "V25", c("V80"))
+find_A_star_delta(test6_matrices, c("V1"))
+find_A_star_delta(test6_matrices, c("V1", "V2", "V8"))
