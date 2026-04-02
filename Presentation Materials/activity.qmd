@@ -1,0 +1,164 @@
+---
+title: "DC Activity"
+format: html
+---
+
+# Introduction
+
+In many biological systems, the relationships between genes can change across conditions — for example, between healthy and diseased tissue cells. Differential correlation analysis can help identify these changes, not by comparing average gene expression (first order), but by measuring how the correlation between genes shifts between groups. This activity walks through a simple simulated example with gene expression data, using R code to visualize and quantify differential correlation.
+
+```{r}
+#| include: FALSE
+# libraries
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(MASS)
+
+set.seed(2025)
+```
+
+# Gene Expression Example
+
+Consider hypothetical gene data where we are investigating several different genes. Under one condition, the two genes are strongly correlated, while under another, genes are weakly correlated. We’ll create simulated expression data for two genes — GeneA and GeneB — under the following conditions:
+
+Healthy: genes are strongly correlated
+
+Diseased: genes are weakly correlated
+
+# Quantifying Differential Correlation
+
+To measure changes in correlation across groups for multiple genes, we compute pairwise correlations within each group. Each group then has a matrix $R$ of size $p \times p$ where each cell contains the pairwise correlation between the corresponding variables.
+
+For the genes example:
+
+$R_1$ - Population correlation matrix for condition 1 (Healthy)
+$R_2$ - Population correlation matrix for condition 2 (Disease)
+
+where:
+$R_1(i,j)$ = The true correlation between gene i and gene j for healthy cells.
+and subsequently,
+$R_2(i,j)$ = The true correlation between gene i and gene j for diseased cells.
+
+We obtain the differential correlation matrix with
+$$\Delta R = R_1 - R_2$$
+The resulting matrix $\Delta R$ contains the pairwise differential correlations between healthy and diseased (healthy - disease).
+
+### Question
+
+- What do positive differential correlations represent? Negative? Zero?
+
+# Simulating Gene Expression Data
+
+```{r}
+n <- 100  # Number of samples per condition
+p <- 10   # number of genes
+
+gene_names <- paste0("Gene", 1:p)
+
+# Correlation structures
+Sigma_healthy <- diag(p)
+Sigma_healthy[1:3, 1:3] <- 0.9  # strong correlations among first 3 genes
+diag(Sigma_healthy) <- 1
+
+Sigma_disease <- diag(p)
+diag(Sigma_disease) <- 1  # independent genes
+
+healthy_data <- t(mvrnorm(n = n, mu = rep(5, p), Sigma = Sigma_healthy))
+disease_data <- t(mvrnorm(n = n, mu = rep(5, p), Sigma = Sigma_disease))
+
+# Combine into one list
+gene_data_list <- list(
+  Healthy = data.frame(healthy_data, row.names = gene_names),
+  Diseased = data.frame(disease_data, row.names = gene_names)
+)
+```
+
+# Correlation Matrices
+
+```{r}
+#| include: FALSE
+get_correlation_heatmap_2 <- function(matrix, taxa){
+  heatmap <- matrix[taxa, taxa]
+  heatmap[is.na(heatmap)] <- 0
+  library(reshape2)
+  
+  heatmap_long <- melt(heatmap)
+  
+  ggplot(heatmap_long, aes(x = Var1, y = Var2, fill = value)) +
+    geom_tile() +
+    scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-1, 1)) +
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 20, hjust = 0)) +
+    xlab("") + 
+    ylab("") +
+    scale_y_discrete(limits=rev) +
+    scale_x_discrete(position = "top")
+}
+```
+
+
+```{r}
+healthy_mat <- cor(t(gene_data_list[[1]]))
+disease_mat <- cor(t(gene_data_list[[2]]))
+
+get_correlation_heatmap_2(healthy_mat)
+get_correlation_heatmap_2(disease_mat)
+```
+
+# DC Cliques
+
+A DC clique is a group of variables that all have high positive differential correlation with each other.
+
+### Questions:
+
+ - What should the resulting clique be for the sample data shown?
+
+ - Why can't large cliques with strong average negative correlation occur?
+ 
+# Adding a third group
+
+```{r}
+Sigma_risk <- diag(p)
+Sigma_risk[1:3, 1:3] <- 0.4   # moderate correlation
+diag(Sigma_risk) <- 1
+
+# Simulate "At Risk" data
+risk_data <- t(mvrnorm(n = n, mu = rep(5, p), Sigma = Sigma_risk))
+
+gene_data_list <- list(
+  Healthy = data.frame(healthy_data, row.names = gene_names),
+  Diseased = data.frame(disease_data, row.names = gene_names),
+  At_Risk = data.frame(risk_data, row.names = gene_names)
+)
+
+risk_mat <- cor(t(gene_data_list[[3]]))
+
+# Visualize all three
+get_correlation_heatmap_2(healthy_mat, gene_names)
+get_correlation_heatmap_2(risk_mat, gene_names)
+get_correlation_heatmap_2(disease_mat, gene_names)
+```
+
+Questions:
+
+ - How could we compare correlations across three groups simultaneously?
+ 
+
+# Runing DCM
+
+```{r}
+#| include: false
+source("C:/Users/tyler/Documents/tylerstoen-affinity-testing/astar_function.R")
+source("C:/Users/tyler/Documents/tylerstoen-affinity-testing/VtS_testing_functions.R")
+```
+
+```{r}
+find_A_star_delta2(gene_data_list, c( "Gene10"))
+```
+
+
+
+
+
+

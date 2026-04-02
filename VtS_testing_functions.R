@@ -13,7 +13,6 @@ compute_delta <- function(corr_matrices, j, A) {
 }
 
 
-
 # Main affinity cycle using compute_delta as the metric
 find_A_star_delta <- function(corr_matrices, A0 = character(0), alpha = 0.05, n_perm=1000) {
   taxa <- rownames(corr_matrices[[1]])
@@ -44,15 +43,11 @@ find_A_star_delta <- function(corr_matrices, A0 = character(0), alpha = 0.05, n_
   group_labels <- rep(1:n_groups, times = group_sizes)
   
   for (perm_i in 1:n_perm) {
-    # Permute group labels
     permuted_labels <- sample(group_labels)
-    
     permuted_data_list <- lapply(1:n_groups, function(g) {
       combined_data[, permuted_labels == g, drop = FALSE]
     })
-    
     corr_matrices_perm <- lapply(permuted_data_list, function(data) cor(t(data)))
-    
     delta_perm[, perm_i] <- sapply(names(delta_values), function(j) {
       compute_delta(corr_matrices_perm, j, A)
     })
@@ -72,11 +67,3 @@ find_A_star_delta <- function(corr_matrices, A0 = character(0), alpha = 0.05, n_
 }
   return(A)
 }
-
-
-
-
-
-# delta_values <- sapply(taxa, function(j) {
-#   compute_delta(corr_matrices, j, A)
-# })
